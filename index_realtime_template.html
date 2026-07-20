@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seat Picker</title>
+<style>
+body{font-family:Arial;background:#222;color:#fff;margin:0;padding:20px}
+.stage{background:#444;padding:10px;text-align:center;border-radius:8px;margin:0 auto 20px;max-width:500px}
+.wrap{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:16px}
+.block{background:#2d2d2d;padding:10px;border-radius:10px}
+.block h3{text-align:center;margin:0 0 8px}
+.seats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.seat{background:#28a745;border:none;color:#fff;padding:10px 0;border-radius:6px;cursor:pointer;transition:.2s}
+.seat.selected{background:#ffc107;color:#000}
+.seat.booked{background:#dc3545;color:#fff}
+.summary{position:sticky;bottom:0;background:#111;padding:12px;margin-top:20px;border-top:1px solid #555}
+button#save{padding:10px 18px;border:none;background:#0d6efd;color:#fff;border-radius:6px}
+</style></head><body>
+<div class="stage"><b>PANGGUNG</b></div>
+<div class="wrap" id="wrap"></div>
+<div class="summary">
+<div><b>Kursi Dipilih:</b> <span id="list">-</span></div>
+<div><b>Jumlah:</b> <span id="count">0</span></div><br>
+<button id="save">SIMPAN</button>
+<button id="reset">RESET SEMUA</button>
+</div>
+
+<!--
+=========================================================
+CATATAN
+Agar benar-benar realtime dengan Firebase, file ini masih
+perlu ditambahkan integrasi Firebase Realtime Database.
+Perubahan tersebut cukup besar sehingga tidak dapat
+disisipkan utuh di respons chat.
+=========================================================
+-->
+
+<script>
+const wrap=document.getElementById('wrap');
+const selected=new Set();
+"ABCDEFGHIJ".split("").forEach(bl=>{
+ let d=document.createElement('div');d.className='block';
+ d.innerHTML='<h3>BLOK '+bl+'</h3><div class="seats"></div>';
+ let s=d.querySelector('.seats');
+ for(let i=1;i<=20;i++){
+  let b=document.createElement('button');
+  b.className='seat';b.textContent=String(i).padStart(2,'0');
+  b.dataset.code=bl+'-'+String(i).padStart(2,'0');
+  b.onclick=()=>{
+   if(b.classList.contains('booked'))return;
+   b.classList.toggle('selected');
+   if(b.classList.contains('selected'))selected.add(b.dataset.code);
+   else selected.delete(b.dataset.code);
+   document.getElementById('list').textContent=[...selected].join(', ')||'-';
+   document.getElementById('count').textContent=selected.size;
+  };
+  s.appendChild(b);
+ }
+ wrap.appendChild(d);
+});
+document.getElementById('save').onclick=()=>{
+ document.querySelectorAll('.seat.selected').forEach(x=>{
+   x.classList.remove('selected');x.classList.add('booked');
+ });
+ selected.clear();
+ document.getElementById('list').textContent='-';
+ document.getElementById('count').textContent='0';
+ alert('Kursi berhasil disimpan');
+}
+</script></body></html>
