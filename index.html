@@ -387,6 +387,18 @@ remove(ref(db,"kursi"));
 
 };
 
+const settingBtn = document.getElementById("settingBtn");
+const settingBox = document.getElementById("settingBox");
+
+settingBtn.onclick = () => {
+
+    if (settingBox.style.display === "none") {
+        settingBox.style.display = "block";
+    } else {
+        settingBox.style.display = "none";
+    }
+
+};  
 </script>
 
 </body>
